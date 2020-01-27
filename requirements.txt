@@ -1,0 +1,4 @@
+svgwrite
+cairosvg
+slackclient
+requests

@@ -1,0 +1,6 @@
+.idea
+config.json
+venv
+*.pyc
+build
+dist
