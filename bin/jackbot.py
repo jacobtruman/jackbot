@@ -25,8 +25,9 @@ def main():
         help='''
         Game for which to retrieve results
         ex: Drawful
-            Quiplash2   
+            Quiplash2
             drawful
+            TeeKO
         '''
     )
 
