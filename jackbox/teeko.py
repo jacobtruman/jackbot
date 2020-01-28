@@ -4,17 +4,18 @@ from cairosvg import svg2png
 from jackbox import Jackbox
 
 
-class Drawful(Jackbox):
+class Teeko(Jackbox):
 
     def __init__(self, game_id: str = None, dev: bool = False):
         super().__init__(game_id=game_id, dev=dev)
 
-        self.data_url = 'https://fishery.jackboxgames.com/artifact/DrawfulGame'
-        self.gallery_url = 'http://games.jackbox.tv/artifact/DrawfulGame'
+        self.data_url = 'https://fishery.jackboxgames.com/artifact/TeeKOGame'
+        self.gallery_url = 'http://games.jackbox.tv/artifact/TeeKOGame'
 
     def create_image(self, _drawing, _name):
         print(f"INFO: Processing image {_name}")
-        dwg = svgwrite.Drawing(profile='tiny', viewBox='0 0 240 320')
+        dwg = svgwrite.Drawing(profile='tiny', viewBox='0 0 300 300')
+        dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'), rx=None, ry=None, fill=_drawing['background']))
         for line in _drawing['lines']:
             if len(line['points']) > 1:
                 shape = dwg.polyline(
@@ -41,28 +42,24 @@ class Drawful(Jackbox):
         if data:
             self.send_intro_message()
 
-            for player in data['playerPortraits']:
-                player_name = player['player']['name']
-                filename = self.create_image(player, player_name)
+            for shirt in data['shirts']:
+                title = shirt['slogan']['slogan']
+                drawing = shirt['drawing']
+                if drawing['artist'] is not None:
+                    artist = drawing['artist']['name']
+                else:
+                    artist = "None"
+                filename = self.create_image(drawing, title)
 
-                self.slack_client.files_upload(file=filename, title=player_name, channels=self.slack_channel)
-                if os.path.exists(filename):
-                    os.remove(filename)
-
-            for drawing in data['drawings']:
-                filename = self.create_image(
-                    drawing,
-                    f"{drawing['player']['name']}-{drawing['title']['text']}"
-                )
-
-                initial_comment = ""
-                title = drawing['title']['text']
-                if "lies" in drawing:
-                    lies = [f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}_\n"]
-                    for lie in drawing['lies']:
-                        lies.append(f"*{lie['player']['name']}*:\t`{lie['text']}`")
-                    initial_comment = '\n'.join(lies)
-                self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,
+                comments = [
+                    f"*Artist*: _{artist}_",
+                    f"*Author*: _{shirt['slogan']['author']['name']}_",
+                    f"*Designer*: _{shirt['designer']['name']}_",
+                    f"*Wins*: _{shirt['wins']}_",
+                    f"\n`{title}`"
+                ]
+                initial_comment = "\n".join(comments)
+                self.slack_client.files_upload(file=filename, title="Stare at the art...", channels=self.slack_channel,
                                                initial_comment=initial_comment)
                 if os.path.exists(filename):
                     os.remove(filename)

@@ -5,8 +5,8 @@ from jackbox import Jackbox
 
 class Quiplash2(Jackbox):
 
-    def __init__(self, game_id: str = None):
-        super().__init__(game_id=game_id)
+    def __init__(self, game_id: str = None, dev: bool = False):
+        super().__init__(game_id=game_id, dev=dev)
 
         self.data_url = 'https://fishery.jackboxgames.com/artifact/Quiplash2Game'
         self.gallery_url = 'http://games.jackbox.tv/artifact/Quiplash2Game'

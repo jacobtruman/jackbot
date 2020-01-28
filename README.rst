@@ -23,8 +23,14 @@ Example config file:
 .. code-block::
 
     {
-        "slack_token": "xoxb-1111111111-222222222222-AAAAAAAAAAAAAAAAAAAAAAAA",
-        "slack_channel": "private_channel"
+        "dev": {
+            "slack_token": "xoxb-1111111111-222222222222-AAAAAAAAAAAAAAAAAAAAAAAA",
+            "slack_channel": "dev_channel"
+        },
+        "prod": {
+            "slack_token": "xoxb-1111111111-222222222222-AAAAAAAAAAAAAAAAAAAAAAAA",
+            "slack_channel": "prod_channel"
+        }
     }
 
 Usage

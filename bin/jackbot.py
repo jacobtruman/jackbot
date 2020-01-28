@@ -41,6 +41,13 @@ def main():
         '''
     )
 
+    parser.add_argument(
+        '-d', '--dev',
+        action='store_true',
+        dest='dev',
+        help='Run in dev mode',
+    )
+
     args = parser.parse_args()
 
     if args.game_name is None:
@@ -54,7 +61,7 @@ def main():
     module_name = f"{package}.{args.game_name.lower()}"
     if module_name in sys.modules:
         method = "process_game"
-        module = getattr(sys.modules[module_name], args.game_name.title())(game_id=args.game_id)
+        module = getattr(sys.modules[module_name], args.game_name.title())(game_id=args.game_id, dev=args.dev)
         if hasattr(module, method):
             try:
                 getattr(module, method)()

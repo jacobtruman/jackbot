@@ -8,15 +8,21 @@ from pathlib import Path
 
 class Jackbox:
 
-    def __init__(self, game_id: str = None):
+    def __init__(self, game_id: str = None, dev: bool = False):
+        self.dev = dev
         config_file = f'{str(Path.home())}/.config/jackbot/config.json'
         try:
             with open(config_file) as file:
-                config = json.loads(file.read())
+                config_json = json.loads(file.read())
         except FileNotFoundError as _fe:
             sys.exit(f"ERROR: config file not found {config_file}:\n\t{_fe}")
         except json.decoder.JSONDecodeError as _je:
             sys.exit(f"ERROR: invalid config file format {config_file}:\n\t{_je}")
+
+        if self.dev:
+            config = config_json['dev']
+        else:
+            config = config_json['prod']
 
         self.slack_channel = config['slack_channel']
         self.slack_client = slack.WebClient(token=config['slack_token'])
