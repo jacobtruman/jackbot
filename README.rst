@@ -10,6 +10,7 @@ Clone this repo and run:
 
 .. code-block::
 
+    cd jackbot
     pip install .
 
 Config
