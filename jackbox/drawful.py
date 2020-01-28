@@ -4,7 +4,7 @@ from cairosvg import svg2png
 from jackbox import Jackbox
 
 
-class Drawful2(Jackbox):
+class Drawful(Jackbox):
 
     def __init__(self, game_id: str = None):
         super().__init__(game_id)

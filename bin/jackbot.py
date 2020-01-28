@@ -24,9 +24,9 @@ def main():
         dest="game_name",
         help='''
         Game for which to retrieve results
-        ex: Drawful2
+        ex: Drawful
             Quiplash2   
-            drawful2
+            drawful
         '''
     )
 

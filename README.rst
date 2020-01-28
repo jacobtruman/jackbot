@@ -41,4 +41,4 @@ Example:
 
 .. code-block::
 
-    jackkbot -g drawful2 -i https://games.jackbox.tv/artifact/DrawfulGame/195dd2b39eab8af9bb08c1a090723ef9
+    jackkbot -g drawful -i https://games.jackbox.tv/artifact/DrawfulGame/195dd2b39eab8af9bb08c1a090723ef9
