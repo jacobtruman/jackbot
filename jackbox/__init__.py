@@ -74,7 +74,7 @@ class Jackbox:
         chars = ["'", '"', ",", "`", "’", '“', '”', ":", ";", "_"]
         for char in chars:
             _filename = _filename.replace(char, "").strip()
-        special_chars = [("Ñ", "N"), ("Ï", "I")]
+        special_chars = [("Ñ", "N"), ("Ï", "I"), ("Æ", "AE")]
         for char, _char in special_chars:
             _filename = _filename.replace(char, _char)
         return _filename.replace(' ', '_')
