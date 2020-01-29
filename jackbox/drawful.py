@@ -44,7 +44,8 @@ class Drawful(Jackbox):
                 player_name = player['player']['name']
                 filename = self.create_image(player, player_name)
 
-                self.slack_client.files_upload(file=filename, title=player_name, channels=self.slack_channel)
+                self.slack_client.files_upload(file=filename, title=player_name, channels=self.slack_channel,
+                                               thread_ts=intro_message['ts'])
                 if os.path.exists(filename):
                     os.remove(filename)
 

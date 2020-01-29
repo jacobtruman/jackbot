@@ -69,9 +69,14 @@ class Jackbox:
 
     @staticmethod
     def clean_filename(_filename):
+        pattern = re.compile(r'<[^>]+>')
+        _filename = pattern.sub('', _filename)
         chars = ["'", '"', ",", "`", "’", '“', '”', ":", ";", "_"]
         for char in chars:
             _filename = _filename.replace(char, "").strip()
+        special_chars = [("Ñ", "N"), ("Ï", "I")]
+        for char, _char in special_chars:
+            _filename = _filename.replace(char, _char)
         return _filename.replace(' ', '_')
 
     def process_game(self):
