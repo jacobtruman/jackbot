@@ -9,8 +9,7 @@ class Drawful(Jackbox):
     def __init__(self, game_id: str = None, dev: bool = False):
         super().__init__(game_id=game_id, dev=dev)
 
-        self.data_url = 'https://fishery.jackboxgames.com/artifact/DrawfulGame'
-        self.gallery_url = 'http://games.jackbox.tv/artifact/DrawfulGame'
+        self.data_url = self.gallery_url = 'DrawfulGame'
 
     def create_image(self, _drawing, _name):
         print(f"INFO: Processing image {_name}")
@@ -39,7 +38,7 @@ class Drawful(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            self.send_intro_message()
+            intro_message = self.send_intro_message()
 
             for player in data['playerPortraits']:
                 player_name = player['player']['name']
@@ -63,6 +62,6 @@ class Drawful(Jackbox):
                         lies.append(f"*{lie['player']['name']}*:\t`{lie['text']}`")
                     initial_comment = '\n'.join(lies)
                 self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,
-                                               initial_comment=initial_comment)
+                                               initial_comment=initial_comment, thread_ts=intro_message['ts'])
                 if os.path.exists(filename):
                     os.remove(filename)

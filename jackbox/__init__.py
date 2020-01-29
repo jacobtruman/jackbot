@@ -49,7 +49,7 @@ class Jackbox:
 
     @data_url.setter
     def data_url(self, value):
-        self._data_url = f"{value}/{self.game_id}"
+        self._data_url = f"https://fishery.jackboxgames.com/artifact/{value}/{self.game_id}"
 
     @property
     def gallery_url(self):
@@ -57,7 +57,7 @@ class Jackbox:
 
     @gallery_url.setter
     def gallery_url(self, value):
-        self._gallery_url = f"{value}/{self.game_id}"
+        self._gallery_url = f"http://games.jackbox.tv/artifact/{value}/{self.game_id}"
 
     @property
     def game_name(self):
@@ -102,4 +102,4 @@ class Jackbox:
             }
         ])
 
-        self.slack_client.chat_postMessage(channel=self.slack_channel, text=self.gallery_url, blocks=blocks)
+        return self.slack_client.chat_postMessage(channel=self.slack_channel, text=self.gallery_url, blocks=blocks)

@@ -8,8 +8,7 @@ class Quiplash2(Jackbox):
     def __init__(self, game_id: str = None, dev: bool = False):
         super().__init__(game_id=game_id, dev=dev)
 
-        self.data_url = 'https://fishery.jackboxgames.com/artifact/Quiplash2Game'
-        self.gallery_url = 'http://games.jackbox.tv/artifact/Quiplash2Game'
+        self.data_url = self.gallery_url = 'Quiplash2Game'
 
     def generate_images(self, index):
         url = f"https://fishery.jackboxgames.com/artifact/gif/Quiplash2Game/{self.game_id}/{index}"
@@ -23,7 +22,7 @@ class Quiplash2(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            self.send_intro_message()
+            intro_message = self.send_intro_message()
 
             image_base_url = "https://s3.amazonaws.com/jbg-blobcast-artifacts/Quiplash2Game"
             for index, matchup in enumerate(data['matchups']):
@@ -54,7 +53,7 @@ class Quiplash2(Jackbox):
                             quips.append("`QUIPLASH!`")
                         initial_comment = '\n'.join(quips)
                         self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,
-                                                       initial_comment=initial_comment)
+                                                       initial_comment=initial_comment, thread_ts=intro_message['ts'])
                         if os.path.exists(filename):
                             os.remove(filename)
                     else:

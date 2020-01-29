@@ -9,8 +9,7 @@ class Teeko(Jackbox):
     def __init__(self, game_id: str = None, dev: bool = False):
         super().__init__(game_id=game_id, dev=dev)
 
-        self.data_url = 'https://fishery.jackboxgames.com/artifact/TeeKOGame'
-        self.gallery_url = 'http://games.jackbox.tv/artifact/TeeKOGame'
+        self.data_url = self.gallery_url = 'TeeKOGame'
 
     def create_image(self, _drawing, _name):
         print(f"INFO: Processing image {_name}")
@@ -40,7 +39,7 @@ class Teeko(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            self.send_intro_message()
+            intro_message = self.send_intro_message()
 
             for shirt in data['shirts']:
                 title = shirt['slogan']['slogan']
@@ -60,6 +59,6 @@ class Teeko(Jackbox):
                 ]
                 initial_comment = "\n".join(comments)
                 self.slack_client.files_upload(file=filename, title="Stare at the art...", channels=self.slack_channel,
-                                               initial_comment=initial_comment)
+                                               initial_comment=initial_comment, thread_ts=intro_message['ts'])
                 if os.path.exists(filename):
                     os.remove(filename)
