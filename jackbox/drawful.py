@@ -14,6 +14,7 @@ class Drawful(Jackbox):
     def create_image(self, _drawing, _name):
         print(f"INFO: Processing image {_name}")
         dwg = svgwrite.Drawing(profile='tiny', viewBox='0 0 240 320')
+        dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'), rx=None, ry=None, fill="#FFFFFF"))
         for line in _drawing['lines']:
             if len(line['points']) > 1:
                 shape = dwg.polyline(
