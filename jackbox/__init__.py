@@ -10,6 +10,7 @@ class Jackbox:
 
     def __init__(self, game_id: str = None, dev: bool = False):
         self.dev = dev
+        self.ext = 'gif'
         config_file = f'{str(Path.home())}/.config/jackbot/config.json'
         try:
             with open(config_file) as file:
@@ -27,8 +28,11 @@ class Jackbox:
         self.slack_channel = config['slack_channel']
         self.slack_client = slack.WebClient(token=config['slack_token'])
 
+        self._fishery_url = "https://fishery.jackboxgames.com/artifact"
         self._data_url = None
         self._gallery_url = None
+        self._base_image_url = None
+        self._base_gen_image_url = None
 
         self._game_id = None
         self.game_id = game_id
@@ -49,7 +53,7 @@ class Jackbox:
 
     @data_url.setter
     def data_url(self, value):
-        self._data_url = f"https://fishery.jackboxgames.com/artifact/{value}/{self.game_id}"
+        self._data_url = f"{self._fishery_url}/{value}/{self.game_id}"
 
     @property
     def gallery_url(self):
@@ -58,6 +62,22 @@ class Jackbox:
     @gallery_url.setter
     def gallery_url(self, value):
         self._gallery_url = f"http://games.jackbox.tv/artifact/{value}/{self.game_id}"
+
+    @property
+    def base_image_url(self):
+        return self._base_image_url
+
+    @base_image_url.setter
+    def base_image_url(self, value):
+        self._base_image_url = f"https://s3.amazonaws.com/jbg-blobcast-artifacts/{value}/{self.game_id}"
+
+    @property
+    def base_gen_image_url(self):
+        return self._base_gen_image_url
+
+    @base_gen_image_url.setter
+    def base_gen_image_url(self, value):
+        self._base_gen_image_url = f"{self._fishery_url}/{self.ext}/{value}/{self.game_id}"
 
     @property
     def game_name(self):
@@ -86,6 +106,27 @@ class Jackbox:
         else:
             print(f"ERROR: Invalid response from server for url {self.data_url}: ({r.status_code}) {r.text}")
             return False
+
+    def generate_images(self, index, filename):
+        image_urls = {
+            "gif": f"{self.base_image_url}/anim_{index}.gif",
+            "png": f"{self.base_image_url}/image_{index}.png"
+        }
+        url = f"{self.base_gen_image_url}/{index}"
+        r = requests.get(url)
+
+        print(f"INFO: Getting image {url}")
+        if r.status_code != 200:
+            print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}")
+            return False
+        else:
+            r2 = requests.get(image_urls[self.ext])
+            if r2.status_code != 200:
+                print(f"ERROR: There was a problem getting image:\n{r.status_code}\t{r.text}")
+            else:
+                with open(filename, 'wb') as f:
+                    f.write(r2.content)
+        return True
 
     def send_intro_message(self):
         blocks = str([
