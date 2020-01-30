@@ -112,20 +112,25 @@ class Jackbox:
             "gif": f"{self.base_image_url}/anim_{index}.gif",
             "png": f"{self.base_image_url}/image_{index}.png"
         }
-        url = f"{self.base_gen_image_url}/{index}"
-        r = requests.get(url)
 
-        print(f"INFO: Getting image {url}")
-        if r.status_code != 200:
-            print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}")
+        if self.ext == 'gif':
+            url = f"{self.base_gen_image_url}/{index}"
+            r = requests.get(url)
+
+            print(f"INFO: Generating image {url}")
+            if r.status_code != 200:
+                print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}")
+                return False
+
+        print(f"INFO: Getting image {image_urls[self.ext]}")
+        r2 = requests.get(image_urls[self.ext])
+        if r2.status_code != 200:
+            print(f"ERROR: There was a problem getting image:\n{r.status_code}\t{r.text}")
             return False
         else:
-            r2 = requests.get(image_urls[self.ext])
-            if r2.status_code != 200:
-                print(f"ERROR: There was a problem getting image:\n{r.status_code}\t{r.text}")
-            else:
-                with open(filename, 'wb') as f:
-                    f.write(r2.content)
+            with open(filename, 'wb') as f:
+                f.write(r2.content)
+
         return True
 
     def send_intro_message(self):
