@@ -37,10 +37,11 @@ class Jackbox:
         self._game_id = None
         self.game_id = game_id
         self._game_name = None
-        self.game_name = self.__class__.__name__
 
     @property
     def game_id(self):
+        if self._game_name is None:
+            self.game_name = self.__class__.__name__
         return self._game_id
 
     @game_id.setter
@@ -88,6 +89,11 @@ class Jackbox:
         self._game_name = re.sub(r"([A-Z,0-9])", r" \1", value).strip()
 
     @staticmethod
+    def parse_game_url(url):
+        url_parts = url.strip("/").split("/")
+        return url_parts[-2].replace("Game", ""), url_parts[-1]
+
+    @staticmethod
     def clean_filename(_filename):
         pattern = re.compile(r'<[^>]+>')
         _filename = pattern.sub('', _filename)
@@ -125,7 +131,7 @@ class Jackbox:
         print(f"INFO: Getting image {image_urls[self.ext]}")
         r2 = requests.get(image_urls[self.ext])
         if r2.status_code != 200:
-            print(f"ERROR: There was a problem getting image:\n{r.status_code}\t{r.text}")
+            print(f"ERROR: There was a problem getting image:\n{r2.status_code}\t{r2.text}")
             return False
         else:
             with open(filename, 'wb') as f:

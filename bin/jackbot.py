@@ -4,6 +4,8 @@ import sys
 import argparse
 import os
 
+from jackbox import Jackbox
+
 # import all modules in jackbox package
 package = "jackbox"
 for module in os.listdir(f"{os.path.dirname(__file__)}/../{package}/"):
@@ -43,6 +45,15 @@ def main():
     )
 
     parser.add_argument(
+        "-u", "--game_url",
+        dest="game_url",
+        help='''
+            Url of the game for which to retrieve results
+            ex: http://games.jackbox.tv/artifact/Quiplash2Game/fa52a821368421e960dff1b6fa1dcf07/
+            '''
+    )
+
+    parser.add_argument(
         '-d', '--dev',
         action='store_true',
         dest='dev',
@@ -51,11 +62,14 @@ def main():
 
     args = parser.parse_args()
 
-    if args.game_name is None:
-        args.game_name = input("Enter game: ")
+    if args.game_url is None:
+        if args.game_name is None:
+            args.game_name = input("Enter game: ")
 
-    if args.game_id is None:
-        args.game_id = input("Enter game id: ")
+        if args.game_id is None:
+            args.game_id = input("Enter game id: ")
+    else:
+        args.game_name, args.game_id = Jackbox.parse_game_url(args.game_url)
 
     print(args)
 
