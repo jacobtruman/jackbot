@@ -94,16 +94,16 @@ class Jackbox:
         return url_parts[-2].replace("Game", ""), url_parts[-1]
 
     @staticmethod
-    def clean_filename(_filename):
+    def clean_string(_string):
         pattern = re.compile(r'<[^>]+>')
-        _filename = pattern.sub('', _filename)
+        _string = pattern.sub('', _string)
         chars = ["'", '"', ",", "`", "’", '“', '”', ":", ";", "_"]
         for char in chars:
-            _filename = _filename.replace(char, "").strip()
+            _string = _string.replace(char, "").strip()
         special_chars = [("Ñ", "N"), ("Ï", "I"), ("Æ", "AE")]
         for char, _char in special_chars:
-            _filename = _filename.replace(char, _char)
-        return _filename.replace(' ', '_')
+            _string = _string.replace(char, _char)
+        return _string.replace(' ', '_')
 
     def process_game(self):
         r = requests.get(self.data_url)

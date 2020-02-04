@@ -23,7 +23,7 @@ class Overdrawn(Jackbox):
                     title = round_data['artQuestion']['displayText']
                 else:
                     title = "UNDEFINED"
-                filename = f"{self.clean_filename(title)}.{self.ext}"
+                filename = f"{self.clean_string(title)}.{self.ext}"
                 if self.generate_images(index, filename):
                     initial_comment = f"*{title}*"
                     self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,

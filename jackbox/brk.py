@@ -21,7 +21,7 @@ class Brk(Jackbox):
                 bracket = data['bracketData'][bracket_num]
                 for index, matchup in enumerate(bracket['matchups']):
                     title = f"{bracket['content']['prompt']['text']} {index}"
-                    filename = f"{self.clean_filename(title)}.{self.ext}"
+                    filename = f"{self.clean_string(title)}.{self.ext}"
                     if self.generate_images(f"{bracket_num}_{index}", filename):
                         initial_comment = f"*{title}*"
                         self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,

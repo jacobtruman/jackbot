@@ -16,7 +16,7 @@ class Quiplash2(Jackbox):
 
             for index, matchup in enumerate(data['matchups']):
 
-                filename = f"{self.clean_filename(matchup['question']['prompt'])}.{self.ext}"
+                filename = f"{self.clean_string(matchup['question']['prompt'])}.{self.ext}"
                 if self.generate_images(index, filename):
                     title = matchup['question']['prompt']
                     quips = [f"*{title}*"]

@@ -32,7 +32,7 @@ class Drawful(Jackbox):
                     stroke_width=line['thickness']
                 )
             dwg.add(shape)
-        filename = f"./{self.clean_filename(_name)}.png"
+        filename = f"./{self.clean_string(_name)}.png"
         svg2png(bytestring=dwg.tostring(), write_to=filename)
         return filename
 
@@ -56,14 +56,47 @@ class Drawful(Jackbox):
                     f"{drawing['player']['name']}-{drawing['title']['text']}"
                 )
 
-                initial_comment = ""
+                text = "Stare at the art..."
+                self.slack_client.files_upload(
+                    file=filename,
+                    title=text,
+                    channels=self.slack_channel,
+                    thread_ts=intro_message['ts']
+                )
+
                 title = drawing['title']['text']
-                if "lies" in drawing:
-                    lies = [f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}_\n"]
+                blocks = [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": self.clean_string(f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n")
+                        }
+                    }
+                ]
+                if "lies" in drawing and len(drawing['lies']) > 0:
+                    lies = []
+
                     for lie in drawing['lies']:
-                        lies.append(f"*{lie['player']['name']}*:\t`{lie['text']}`")
-                    initial_comment = '\n'.join(lies)
-                self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,
-                                               initial_comment=initial_comment, thread_ts=intro_message['ts'])
+                        lies.append(self.clean_string(f"*{lie['player']['name']}*:\t`{lie['text']}`"))
+
+                    blocks.append(
+                        {
+                            "type": "context",
+                            "elements": [
+                                {
+                                    "type": "mrkdwn",
+                                    "text": "\n".join(lies)
+                                }
+                            ]
+                        }
+                    )
+
+                self.slack_client.chat_postMessage(
+                    channel=self.slack_channel,
+                    text=text,
+                    blocks=str(blocks),
+                    thread_ts=intro_message['ts']
+                )
                 if os.path.exists(filename):
                     os.remove(filename)

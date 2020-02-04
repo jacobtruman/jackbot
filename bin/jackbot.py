@@ -8,9 +8,11 @@ from jackbox import Jackbox
 
 # import all modules in jackbox package
 package = "jackbox"
+modules_names = []
 for module in os.listdir(f"{os.path.dirname(__file__)}/../{package}/"):
     if module == '__init__.py' or module == 'jackbox.py' or module[-3:] != '.py':
         continue
+    modules_names.append(module[:-3])
     __import__(f"{package}.{module[:-3]}", locals(), globals())
     del module
 
@@ -24,12 +26,9 @@ def main():
     parser.add_argument(
         "-g", "--game_name",
         dest="game_name",
-        help='''
+        help=f'''
         Game for which to retrieve results
-        ex: Drawful
-            Quiplash2
-            drawful
-            TeeKO
+        ex: {", ".join(modules_names)}
         '''
     )
 

@@ -32,7 +32,7 @@ class Teeko(Jackbox):
                     stroke_width=line['thickness']
                 )
             dwg.add(shape)
-        filename = f"./{self.clean_filename(_name)}.png"
+        filename = f"./{self.clean_string(_name)}.png"
         svg2png(bytestring=dwg.tostring(), write_to=filename)
         return filename
 
