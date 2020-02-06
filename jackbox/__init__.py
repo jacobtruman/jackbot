@@ -37,6 +37,7 @@ class Jackbox:
         self._game_id = None
         self.game_id = game_id
         self._game_name = None
+        self._max_attempts = 5
 
     @property
     def game_id(self):
@@ -94,7 +95,7 @@ class Jackbox:
         return url_parts[-2].replace("Game", ""), url_parts[-1]
 
     @staticmethod
-    def clean_string(_string):
+    def clean_string(_string, underscore=True):
         pattern = re.compile(r'<[^>]+>')
         _string = pattern.sub('', _string)
         chars = ["'", '"', ",", "`", "’", '“', '”', ":", ";", "_"]
@@ -103,7 +104,9 @@ class Jackbox:
         special_chars = [("Ñ", "N"), ("Ï", "I"), ("Æ", "AE")]
         for char, _char in special_chars:
             _string = _string.replace(char, _char)
-        return _string.replace(' ', '_')
+        if underscore:
+            _string = _string.replace(' ', '_')
+        return _string
 
     def process_game(self):
         r = requests.get(self.data_url)
@@ -113,7 +116,7 @@ class Jackbox:
             print(f"ERROR: Invalid response from server for url {self.data_url}: ({r.status_code}) {r.text}")
             return False
 
-    def generate_images(self, index, filename):
+    def generate_images(self, index, filename, attempt=0):
         image_urls = {
             "gif": f"{self.base_image_url}/anim_{index}.gif",
             "png": f"{self.base_image_url}/image_{index}.png"
@@ -125,7 +128,11 @@ class Jackbox:
 
             print(f"INFO: Generating image {url}")
             if r.status_code != 200:
-                print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}")
+                attempt += 1
+                print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}\n"
+                      f"Attempt: {attempt} / {self._max_attempts}")
+                if attempt < self._max_attempts:
+                    return self.generate_images(index, filename, attempt)
                 return False
 
         print(f"INFO: Getting image {image_urls[self.ext]}")

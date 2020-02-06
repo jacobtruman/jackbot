@@ -70,7 +70,7 @@ class Drawful(Jackbox):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": self.clean_string(f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n")
+                            "text": self.clean_string(f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n", underscore=False)
                         }
                     }
                 ]
@@ -78,7 +78,7 @@ class Drawful(Jackbox):
                     lies = []
 
                     for lie in drawing['lies']:
-                        lies.append(self.clean_string(f"*{lie['player']['name']}*:\t`{lie['text']}`"))
+                        lies.append(self.clean_string(f"*{lie['player']['name']}*:\t`{lie['text']}`", underscore=False))
 
                     blocks.append(
                         {
