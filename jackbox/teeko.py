@@ -6,8 +6,8 @@ from jackbox import Jackbox
 
 class Teeko(Jackbox):
 
-    def __init__(self, game_id: str = None, dev: bool = False):
-        super().__init__(game_id=game_id, dev=dev)
+    def __init__(self, game_id: str = None, api_account: str = 'dev'):
+        super().__init__(game_id=game_id, api_account=api_account)
 
         self.data_url = self.gallery_url = 'TeeKOGame'
 

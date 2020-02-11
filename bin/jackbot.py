@@ -53,10 +53,10 @@ def main():
     )
 
     parser.add_argument(
-        '-d', '--dev',
-        action='store_true',
-        dest='dev',
-        help='Run in dev mode',
+        "-a", "--api_account",
+        dest="api_account",
+        default="dev",
+        help='API account key as defined in ~/.config/jackbot/config.json. Default dev'
     )
 
     args = parser.parse_args()
@@ -75,7 +75,10 @@ def main():
     module_name = f"{package}.{args.game_name.lower()}"
     if module_name in sys.modules:
         method = "process_game"
-        module = getattr(sys.modules[module_name], args.game_name.title())(game_id=args.game_id, dev=args.dev)
+        module = getattr(sys.modules[module_name], args.game_name.title())(
+            game_id=args.game_id,
+            api_account=args.api_account
+        )
         if hasattr(module, method):
             try:
                 getattr(module, method)()

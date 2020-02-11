@@ -8,8 +8,8 @@ from pathlib import Path
 
 class Jackbox:
 
-    def __init__(self, game_id: str = None, dev: bool = False):
-        self.dev = dev
+    def __init__(self, game_id: str = None, api_account: str = 'dev'):
+        self.api_account = api_account
         self.ext = 'gif'
         config_file = f'{str(Path.home())}/.config/jackbot/config.json'
         try:
@@ -20,10 +20,10 @@ class Jackbox:
         except json.decoder.JSONDecodeError as _je:
             sys.exit(f"ERROR: invalid config file format {config_file}:\n\t{_je}")
 
-        if self.dev:
-            config = config_json['dev']
+        if self.api_account in config_json:
+            config = config_json[self.api_account]
         else:
-            config = config_json['prod']
+            sys.exit(f"API account not defined: {self.api_account}")
 
         self.slack_channel = config['slack_channel']
         self.slack_client = slack.WebClient(token=config['slack_token'])
