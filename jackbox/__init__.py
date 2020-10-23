@@ -111,7 +111,7 @@ class Jackbox:
     def process_game(self):
         r = requests.get(self.data_url)
         if r.status_code == 200:
-            return json.loads(r.text)
+            return r.json()
         else:
             print(f"ERROR: Invalid response from server for url {self.data_url}: ({r.status_code}) {r.text}")
             return False
