@@ -89,9 +89,6 @@ class Worldchampions(Jackbox):
     def process_game(self):
         data = super().process_game()
 
-        with open(data_file) as file_handle:
-            data = json.load(file_handle)
-
         if data:
             intro_message = self.send_intro_message()
 
