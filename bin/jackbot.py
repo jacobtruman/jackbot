@@ -7,13 +7,13 @@ import os
 from jackbox import Jackbox
 
 # import all modules in jackbox package
-package = "jackbox"
+PACKAGE = "jackbox"
 modules_names = []
-for module in os.listdir(f"{os.path.dirname(__file__)}/../{package}/"):
+for module in os.listdir(f"{os.path.dirname(__file__)}/../{PACKAGE}/"):
     if module == '__init__.py' or module == 'jackbox.py' or module[-3:] != '.py':
         continue
     modules_names.append(module[:-3])
-    __import__(f"{package}.{module[:-3]}", locals(), globals())
+    __import__(f"{PACKAGE}.{module[:-3]}", locals(), globals())
     del module
 
 
@@ -72,18 +72,18 @@ def main():
 
     print(args)
 
-    module_name = f"{package}.{args.game_name.lower()}"
+    module_name = f"{PACKAGE}.{args.game_name.lower()}"
     if module_name in sys.modules:
         method = "process_game"
-        module = getattr(sys.modules[module_name], args.game_name.title())(
+        _module = getattr(sys.modules[module_name], args.game_name.title())(
             game_id=args.game_id,
             api_account=args.api_account
         )
-        if hasattr(module, method):
+        if hasattr(_module, method):
             try:
-                getattr(module, method)()
-            except Exception as e:
-                sys.exit(e)
+                getattr(_module, method)()
+            except Exception as exc:  # pylint: disable=broad-except
+                sys.exit(exc)
         else:
             sys.exit(f"ERROR: Module '{module_name}' does not have method '{method}'")
     else:

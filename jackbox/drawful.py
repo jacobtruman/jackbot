@@ -70,7 +70,10 @@ class Drawful(Jackbox):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": self.clean_string(f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n", underscore=False)
+                            "text": self.clean_string(
+                                f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n",
+                                underscore=False
+                            )
                         }
                     }
                 ]

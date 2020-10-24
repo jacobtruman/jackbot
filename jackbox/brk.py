@@ -19,7 +19,7 @@ class Brk(Jackbox):
 
             for bracket_num in data['bracketData']:
                 bracket = data['bracketData'][bracket_num]
-                for index, matchup in enumerate(bracket['matchups']):
+                for index, _ in enumerate(bracket['matchups']):
                     title = f"{bracket['content']['prompt']['text']} {index}"
                     filename = f"{self.clean_string(title)}.{self.ext}"
                     if self.generate_images(f"{bracket_num}_{index}", filename):

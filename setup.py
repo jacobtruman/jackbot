@@ -6,18 +6,11 @@ def filter_options(req):
     return not req.strip().startswith('--')
 
 
-requirements = []
-try:
-    with open('requirements.txt') as f:
-        requirements = list(filter(filter_options, f.read().splitlines()))
-except FileNotFoundError as e:
-    pass
-
 test_requirements = []
 try:
-    with open('test-requirements.txt') as f:
-        test_requirements = list(filter(filter_options, f.read().splitlines()))
-except FileNotFoundError as e:
+    with open('test-requirements.txt') as file_handle:
+        test_requirements = list(filter(filter_options, file_handle.read().splitlines()))
+except FileNotFoundError as exc:
     pass
 
 setup(
@@ -31,7 +24,12 @@ setup(
     packages=find_packages(),
     package_data={},
     zip_safe=False,
-    install_requires=requirements,
+    install_requires=[
+        "svgwrite",
+        "cairosvg",
+        "slackclient",
+        "requests",
+    ],
     tests_require=test_requirements,
     entry_points={
         'console_scripts': [

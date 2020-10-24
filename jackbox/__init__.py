@@ -1,12 +1,12 @@
 import json
-import slack
 import re
 import sys
-import requests
 from pathlib import Path
+import slack
+import requests
 
 
-class Jackbox:
+class Jackbox:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, game_id: str = None, api_account: str = 'dev'):
         self.api_account = api_account
@@ -109,12 +109,13 @@ class Jackbox:
         return _string
 
     def process_game(self):
-        r = requests.get(self.data_url)
-        if r.status_code == 200:
-            return r.json()
-        else:
-            print(f"ERROR: Invalid response from server for url {self.data_url}: ({r.status_code}) {r.text}")
-            return False
+        response = requests.get(self.data_url)
+        if response.status_code == 200:
+            return response.json()
+        print(
+            f"ERROR: Invalid response from server for url {self.data_url}: ({response.status_code}) {response.text}"
+        )
+        return False
 
     def generate_images(self, index, filename, attempt=0):
         image_urls = {
@@ -124,25 +125,24 @@ class Jackbox:
 
         if self.ext == 'gif':
             url = f"{self.base_gen_image_url}/{index}"
-            r = requests.get(url)
+            response = requests.get(url)
 
             print(f"INFO: Generating image {url}")
-            if r.status_code != 200:
+            if response.status_code != 200:
                 attempt += 1
-                print(f"ERROR: There was a problem generating image:\n{r.status_code}\t{r.text}\n"
+                print(f"ERROR: There was a problem generating image:\n{response.status_code}\t{response.text}\n"
                       f"Attempt: {attempt} / {self._max_attempts}")
                 if attempt < self._max_attempts:
                     return self.generate_images(index, filename, attempt)
                 return False
 
         print(f"INFO: Getting image {image_urls[self.ext]}")
-        r2 = requests.get(image_urls[self.ext])
-        if r2.status_code != 200:
-            print(f"ERROR: There was a problem getting image:\n{r2.status_code}\t{r2.text}")
+        response = requests.get(image_urls[self.ext])
+        if response.status_code != 200:
+            print(f"ERROR: There was a problem getting image:\n{response.status_code}\t{response.text}")
             return False
-        else:
-            with open(filename, 'wb') as f:
-                f.write(r2.content)
+        with open(filename, 'wb') as file_handle:
+            file_handle.write(response.content)
 
         return True
 
