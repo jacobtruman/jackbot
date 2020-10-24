@@ -98,7 +98,7 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
     def clean_string(_string, underscore=True):
         pattern = re.compile(r'<[^>]+>')
         _string = pattern.sub('', _string)
-        chars = ["'", '"', ",", "`", "’", '“', '”', ":", ";", "_"]
+        chars = ["'", '"', ",", "’", '“', '”', ";", "_"]
         for char in chars:
             _string = _string.replace(char, "").strip()
         special_chars = [("Ñ", "N"), ("Ï", "I"), ("Æ", "AE")]

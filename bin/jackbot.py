@@ -83,7 +83,7 @@ def main():
             try:
                 getattr(_module, method)()
             except Exception as exc:  # pylint: disable=broad-except
-                sys.exit(exc)
+                raise exc
         else:
             sys.exit(f"ERROR: Module '{module_name}' does not have method '{method}'")
     else:
