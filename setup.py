@@ -15,7 +15,7 @@ except FileNotFoundError as exc:
 
 setup(
     name="jackbot",
-    version="1.0.0",
+    version="1.0.1",
     description="Jackbox game results retriever",
     long_description="Pull results from various completed jackbox games and push them to slack channel(s)",
     author='Jacob Truman',
