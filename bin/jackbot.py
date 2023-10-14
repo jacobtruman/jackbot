@@ -59,6 +59,13 @@ def main():
         help='API account key as defined in ~/.config/jackbot/config.json. Default dev'
     )
 
+    parser.add_argument(
+        '-d', '--dry_run',
+        action='store_true',
+        dest='dry_run',
+        help='Purge successfully converted source files',
+    )
+
     args = parser.parse_args()
 
     if args.game_url is None:
@@ -77,7 +84,8 @@ def main():
         method = "process_game"
         _module = getattr(sys.modules[module_name], args.game_name.title())(
             game_id=args.game_id,
-            api_account=args.api_account
+            api_account=args.api_account,
+            dry_run=args.dry_run
         )
         if hasattr(_module, method):
             try:

@@ -6,8 +6,8 @@ from jackbox import Jackbox
 
 class Drawful(Jackbox):
 
-    def __init__(self, game_id: str = None, api_account: str = 'dev'):
-        super().__init__(game_id=game_id, api_account=api_account)
+    def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
+        super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
         self.data_url = self.gallery_url = 'DrawfulGame'
 
@@ -41,28 +41,34 @@ class Drawful(Jackbox):
         if data:
             intro_message = self.send_intro_message()
 
-            for player in data['playerPortraits']:
+            for player in data['blob']['playerPortraits']:
                 player_name = player['player']['name']
                 filename = self.create_image(player, player_name)
 
-                self.slack_client.files_upload(file=filename, title=player_name, channels=self.slack_channel,
-                                               thread_ts=intro_message['ts'])
+                if self.slack_client:
+                    self.slack_client.files_upload(
+                        file=filename,
+                        title=player_name,
+                        channels=self.slack_channel,
+                        thread_ts=intro_message['ts']
+                    )
                 if os.path.exists(filename):
                     os.remove(filename)
 
-            for drawing in data['drawings']:
+            for drawing in data['blob']['drawings']:
                 filename = self.create_image(
                     drawing,
                     f"{drawing['player']['name']}-{drawing['title']['text']}"
                 )
 
                 text = "Stare at the art..."
-                self.slack_client.files_upload(
-                    file=filename,
-                    title=text,
-                    channels=self.slack_channel,
-                    thread_ts=intro_message['ts']
-                )
+                if self.slack_client:
+                    self.slack_client.files_upload(
+                        file=filename,
+                        title=text,
+                        channels=self.slack_channel,
+                        thread_ts=intro_message['ts']
+                    )
 
                 title = drawing['title']['text']
                 blocks = [
@@ -95,11 +101,12 @@ class Drawful(Jackbox):
                         }
                     )
 
-                self.slack_client.chat_postMessage(
-                    channel=self.slack_channel,
-                    text=text,
-                    blocks=str(blocks),
-                    thread_ts=intro_message['ts']
-                )
+                if self.slack_client:
+                    self.slack_client.chat_postMessage(
+                        channel=self.slack_channel,
+                        text=text,
+                        blocks=str(blocks),
+                        thread_ts=intro_message['ts']
+                    )
                 if os.path.exists(filename):
                     os.remove(filename)

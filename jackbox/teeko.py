@@ -6,8 +6,8 @@ from jackbox import Jackbox
 
 class Teeko(Jackbox):
 
-    def __init__(self, game_id: str = None, api_account: str = 'dev'):
-        super().__init__(game_id=game_id, api_account=api_account)
+    def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
+        super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
         self.data_url = self.gallery_url = 'TeeKOGame'
 
@@ -58,7 +58,13 @@ class Teeko(Jackbox):
                     f"\n`{title}`"
                 ]
                 initial_comment = "\n".join(comments)
-                self.slack_client.files_upload(file=filename, title="Stare at the art...", channels=self.slack_channel,
-                                               initial_comment=initial_comment, thread_ts=intro_message['ts'])
+                if self.slack_client:
+                    self.slack_client.files_upload(
+                        file=filename,
+                        title="Stare at the art...",
+                        channels=self.slack_channel,
+                        initial_comment=initial_comment,
+                        thread_ts=intro_message['ts']
+                    )
                 if os.path.exists(filename):
                     os.remove(filename)

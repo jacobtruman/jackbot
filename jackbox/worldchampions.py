@@ -6,10 +6,11 @@ from jackbox import Jackbox
 
 class Worldchampions(Jackbox):
 
-    def __init__(self, game_id: str = None, api_account: str = 'dev'):
-        super().__init__(game_id=game_id, api_account=api_account)
+    def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
+        super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
         self.data_url = self.gallery_url = self.base_image_url = self.base_gen_image_url = 'WorldChampionsGame'
+        self.game_name = "Champ'd UP"
 
     @staticmethod
     def _split_point(point):
@@ -50,12 +51,13 @@ class Worldchampions(Jackbox):
         name = drawing['name']
         title = metadata['title']
         text = f"Stare at the art... {name}"
-        self.slack_client.files_upload(
-            file=filename,
-            title=text,
-            channels=self.slack_channel,
-            thread_ts=metadata['intro_message']['ts']
-        )
+        if self.slack_client:
+            self.slack_client.files_upload(
+                file=filename,
+                title=text,
+                channels=self.slack_channel,
+                thread_ts=metadata['intro_message']['ts']
+            )
 
         text_items = {
             "Name": name,
@@ -77,12 +79,13 @@ class Worldchampions(Jackbox):
             }
         ]
 
-        self.slack_client.chat_postMessage(
-            channel=self.slack_channel,
-            text=text,
-            blocks=str(blocks),
-            thread_ts=metadata['intro_message']['ts']
-        )
+        if self.slack_client:
+            self.slack_client.chat_postMessage(
+                channel=self.slack_channel,
+                text=text,
+                blocks=str(blocks),
+                thread_ts=metadata['intro_message']['ts']
+            )
         if os.path.exists(filename):
             os.remove(filename)
 

@@ -4,8 +4,8 @@ from jackbox import Jackbox
 
 class Quiplash2(Jackbox):
 
-    def __init__(self, game_id: str = None, api_account: str = 'dev'):
-        super().__init__(game_id=game_id, api_account=api_account)
+    def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
+        super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
         self.data_url = self.gallery_url = self.base_image_url = self.base_gen_image_url = 'Quiplash2Game'
 
@@ -29,7 +29,13 @@ class Quiplash2(Jackbox):
                     if quiplash:
                         quips.append("`QUIPLASH!`")
                     initial_comment = '\n'.join(quips)
-                    self.slack_client.files_upload(file=filename, title=title, channels=self.slack_channel,
-                                                   initial_comment=initial_comment, thread_ts=intro_message['ts'])
+                    if self.slack_client:
+                        self.slack_client.files_upload(
+                            file=filename,
+                            title=title,
+                            channels=self.slack_channel,
+                            initial_comment=initial_comment,
+                            thread_ts=intro_message['ts']
+                        )
                     if os.path.exists(filename):
                         os.remove(filename)

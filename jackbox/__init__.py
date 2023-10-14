@@ -8,7 +8,8 @@ import requests
 
 class Jackbox:  # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, game_id: str = None, api_account: str = 'dev'):
+    def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
+        self.dry_run = dry_run
         self.api_account = api_account
         self.ext = 'gif'
         config_file = f'{str(Path.home())}/.config/jackbot/config.json'
@@ -26,7 +27,7 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
             sys.exit(f"API account not defined: {self.api_account}")
 
         self.slack_channel = config['slack_channel']
-        self.slack_client = slack.WebClient(token=config['slack_token'])
+        self.slack_client = None if self.dry_run else slack.WebClient(token=config['slack_token'])
 
         self._fishery_url = "https://fishery.jackboxgames.com/artifact"
         self._data_url = None
@@ -59,6 +60,7 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
 
     @property
     def gallery_url(self):
+        print(self._gallery_url)
         return self._gallery_url
 
     @gallery_url.setter
@@ -117,11 +119,12 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
         )
         return False
 
-    def generate_images(self, index, filename, attempt=0):
-        image_urls = {
-            "gif": f"{self.base_image_url}/anim_{index}.gif",
-            "png": f"{self.base_image_url}/image_{index}.png"
-        }
+    def generate_images(self, index: str, filename: str, attempt: int = 0, image_urls: dict | None = None):
+        if image_urls is None:
+            image_urls = {
+                "gif": f"{self.base_image_url}/anim_{index}.gif",
+                "png": f"{self.base_image_url}/image_{index}.png"
+            }
 
         if self.ext == 'gif':
             url = f"{self.base_gen_image_url}/{index}"
@@ -133,7 +136,7 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
                 print(f"ERROR: There was a problem generating image:\n{response.status_code}\t{response.text}\n"
                       f"Attempt: {attempt} / {self._max_attempts}")
                 if attempt < self._max_attempts:
-                    return self.generate_images(index, filename, attempt)
+                    return self.generate_images(index=index, filename=filename, attempt=attempt, image_urls=image_urls)
                 return False
 
         print(f"INFO: Getting image {image_urls[self.ext]}")
@@ -166,4 +169,6 @@ class Jackbox:  # pylint: disable=too-many-instance-attributes
             }
         ])
 
-        return self.slack_client.chat_postMessage(channel=self.slack_channel, text=self.gallery_url, blocks=blocks)
+        if self.slack_client:
+            return self.slack_client.chat_postMessage(channel=self.slack_channel, text=self.gallery_url, blocks=blocks)
+        return None
