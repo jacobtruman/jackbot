@@ -12,30 +12,36 @@ class Quiplash3(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            for index, matchup in enumerate(data['blob']['matchups']):
-
-                filename = f"{self.clean_string(matchup['question']['prompt'])}.{self.ext}"
-                if self.generate_images(index, filename):
-                    title = matchup['question']['prompt']
-                    quips = [f"*{title}*"]
-                    quiplash = False
-                    for side in ['left', 'right']:
-                        quip = matchup[side]
-                        quips.append(f"*{quip['player']['name']}*: _{quip['answer']}_ ({quip['percent']}%)")
-                        if quip['quiplash'] is True:
-                            quiplash = True
-                    if quiplash:
-                        quips.append("`QUIPLASH!`")
-                    initial_comment = '\n'.join(quips)
-                    if self.slack_client:
-                        self.slack_client.files_upload(
+                for index, matchup in enumerate(data['blob']['matchups']):
+                    filename = f"{self.clean_string(matchup['question']['prompt'])}.{self.ext}"
+                    if self.generate_images(index, filename):
+                        title = matchup['question']['prompt']
+                        quips = [f"*{title}*"]
+                        quiplash = False
+                        for side in ['left', 'right']:
+                            quip = matchup[side]
+                            quips.append(f"*{quip['player']['name']}*: _{quip['answer']}_ ({quip['percent']}%)")
+                            if quip['quiplash'] is True:
+                                quiplash = True
+                        if quiplash:
+                            quips.append("`QUIPLASH!`")
+                        initial_comment = '\n'.join(quips)
+                        self.queue_file_upload(
                             file=filename,
                             title=title,
-                            channels=self.slack_channel,
-                            initial_comment=initial_comment,
-                            thread_ts=intro_message['ts']
+                            initial_comment=initial_comment
                         )
-                    if os.path.exists(filename):
-                        os.remove(filename)
+                    else:
+                        raise Exception(f"Failed to generate image for matchup {index}")
+
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise

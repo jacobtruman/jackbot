@@ -39,74 +39,70 @@ class Drawful(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            for player in data['blob']['playerPortraits']:
-                player_name = player['player']['name']
-                filename = self.create_image(player, player_name)
-
-                if self.slack_client:
-                    self.slack_client.files_upload(
+                # Process player portraits
+                for player in data['blob']['playerPortraits']:
+                    player_name = player['player']['name']
+                    filename = self.create_image(player, player_name)
+                    self.queue_file_upload(
                         file=filename,
-                        title=player_name,
-                        channels=self.slack_channel,
-                        thread_ts=intro_message['ts']
-                    )
-                if os.path.exists(filename):
-                    os.remove(filename)
-
-            for drawing in data['blob']['drawings']:
-                filename = self.create_image(
-                    drawing,
-                    f"{drawing['player']['name']}-{drawing['title']['text']}"
-                )
-
-                text = "Stare at the art..."
-                if self.slack_client:
-                    self.slack_client.files_upload(
-                        file=filename,
-                        title=text,
-                        channels=self.slack_channel,
-                        thread_ts=intro_message['ts']
+                        title=player_name
                     )
 
-                title = drawing['title']['text']
-                blocks = [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": self.clean_string(
-                                f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n",
-                                underscore=False
-                            )
-                        }
-                    }
-                ]
-                if "lies" in drawing and len(drawing['lies']) > 0:
-                    lies = []
+                # Process drawings
+                for drawing in data['blob']['drawings']:
+                    filename = self.create_image(
+                        drawing,
+                        f"{drawing['player']['name']}-{drawing['title']['text']}"
+                    )
 
-                    for lie in drawing['lies']:
-                        lies.append(self.clean_string(f"*{lie['player']['name']}*:\t`{lie['text']}`", underscore=False))
+                    text = "Stare at the art..."
+                    self.queue_file_upload(
+                        file=filename,
+                        title=text
+                    )
 
-                    blocks.append(
+                    title = drawing['title']['text']
+                    blocks = [
                         {
-                            "type": "context",
-                            "elements": [
-                                {
-                                    "type": "mrkdwn",
-                                    "text": "\n".join(lies)
-                                }
-                            ]
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": self.clean_string(
+                                    f"*Actual Title*: `{title}`\n*Artist*: _{drawing['player']['name']}\n",
+                                    underscore=False
+                                )
+                            }
                         }
+                    ]
+                    if "lies" in drawing and len(drawing['lies']) > 0:
+                        lies = []
+                        for lie in drawing['lies']:
+                            lies.append(self.clean_string(f"*{lie['player']['name']}*:\t`{lie['text']}`", underscore=False))
+                        blocks.append(
+                            {
+                                "type": "context",
+                                "elements": [
+                                    {
+                                        "type": "mrkdwn",
+                                        "text": "\n".join(lies)
+                                    }
+                                ]
+                            }
+                        )
+
+                    self.queue_chat_message(
+                        text=text,
+                        blocks=str(blocks)
                     )
 
-                if self.slack_client:
-                    self.slack_client.chat_postMessage(
-                        channel=self.slack_channel,
-                        text=text,
-                        blocks=str(blocks),
-                        thread_ts=intro_message['ts']
-                    )
-                if os.path.exists(filename):
-                    os.remove(filename)
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise

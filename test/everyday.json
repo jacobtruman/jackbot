@@ -1,0 +1,146 @@
+{
+   "I_ADDED_gallery_link":"https://fishery.jackboxgames.com/artifact/gallery/EverydayGame/9423fa464204f26306192521dfe72402",
+   "I_ADDED_image_url":"https://s3.amazonaws.com/jbg-blobcast-artifacts/EverydayGame/9423fa464204f26306192521dfe72402/image-player-1-award.jpg",
+   "categoryId":"EverydayGame",
+   "artifactId":"9423fa464204f26306192521dfe72402",
+   "gameData":[
+      {
+         "type":"container",
+         "sort":0,
+         "title":"TRUMAN <span>World's Bestest Devil</span>",
+         "classes":[
+            "Adult0v2"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":1,
+               "title":"Proved your superiority to the rest of the family",
+               "twitterOptions":{
+                  "defaultText":"This family is the best. And I'm the best one in it. Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/1",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-1-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_1.gif",
+                  "objectId":1,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      },
+      {
+         "type":"container",
+         "sort":1,
+         "title":"AARON <span>Slacker</span>",
+         "classes":[
+            "Teen0"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":4,
+               "title":"Did the most selfish activities",
+               "twitterOptions":{
+                  "defaultText":"This family works hard. Which gives me more time to slack off. Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/4",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-4-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_4.gif",
+                  "objectId":4,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      },
+      {
+         "type":"container",
+         "sort":2,
+         "title":"B-JAM <span>Backseat Driver</span>",
+         "classes":[
+            "Child1"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":0,
+               "title":"Ran the most errands around the neighborhood",
+               "twitterOptions":{
+                  "defaultText":"I'm putting this award on the fridge! Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/0",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-0-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_0.gif",
+                  "objectId":0,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      },
+      {
+         "type":"container",
+         "sort":2,
+         "title":"KANERIL <span>Small Bladder</span>",
+         "classes":[
+            "Child0"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":2,
+               "title":"Takes the most bathroom breaks on road trips",
+               "twitterOptions":{
+                  "defaultText":"I'm putting this award on the fridge! Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/2",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-2-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_2.gif",
+                  "objectId":2,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      },
+      {
+         "type":"container",
+         "sort":2,
+         "title":"ICEMELON <span>Friendly Neighborhood Demon</span>",
+         "classes":[
+            "Adult0"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":3,
+               "title":"Called or chatted with the most mortals",
+               "twitterOptions":{
+                  "defaultText":"I'm putting this award on the fridge! Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/3",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-3-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_3.gif",
+                  "objectId":3,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      },
+      {
+         "type":"container",
+         "sort":2,
+         "title":"BRUTUS <span>Squeaky Teen</span>",
+         "classes":[
+            "Teen2"
+         ],
+         "children":[
+            {
+               "type":"shareable",
+               "gameObjectId":5,
+               "title":"Did the most cleaning up",
+               "twitterOptions":{
+                  "defaultText":"I'm putting this award on the fridge! Meet the rest of #TheDevilsAndTheDetails family in this #PartyPack7 game: https://games.jackbox.tv/artifact/EverydayGame/9423fa464204f26306192521dfe72402",
+                  "imageKey":"EverydayGame/9423fa464204f26306192521dfe72402/5",
+                  "imagePngUri":"EverydayGame/9423fa464204f26306192521dfe72402/image-player-5-award.jpg",
+                  "imageGifUri":"EverydayGame/9423fa464204f26306192521dfe72402/anim_5.gif",
+                  "objectId":5,
+                  "gameId":"EverydayGame"
+               }
+            }
+         ]
+      }
+   ]
+}

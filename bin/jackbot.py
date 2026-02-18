@@ -66,7 +66,19 @@ def main():
         help='Purge successfully converted source files',
     )
 
+    parser.add_argument(
+        '-m', '--manage-messages',
+        action='store_true',
+        dest='manage_messages',
+        help='List and delete bot messages from the Slack channel',
+    )
+
     args = parser.parse_args()
+
+    # Handle message management mode
+    if args.manage_messages:
+        Jackbox.manage_messages(api_account=args.api_account)
+        return
 
     if args.game_url is None:
         if args.game_name is None:

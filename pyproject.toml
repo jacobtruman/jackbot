@@ -1,0 +1,34 @@
+[project]
+name = "jackbot"
+version = "1.0.1"
+description = "Jackbox game results retriever"
+readme = "README.rst"
+requires-python = ">=3.11"
+authors = [
+    { name = "Jacob Truman", email = "jatruman@adobe.com" }
+]
+dependencies = [
+    "svgwrite",
+    "cairosvg",
+    "requests",
+    "slack-sdk>=3.40.0",
+]
+
+[project.urls]
+Repository = "https://gitlab.com/jacobtruman/jackbot"
+
+[project.scripts]
+jackbot = "bin.jackbot:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["jackbox", "bin"]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pylint",
+]

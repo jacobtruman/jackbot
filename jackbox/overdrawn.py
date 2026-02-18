@@ -14,25 +14,32 @@ class Overdrawn(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            for index, round_data in enumerate(data['rounds']):
-                if 'titleVotes' in round_data and 'winningTitle' in round_data['titleVotes']:
-                    title = round_data['titleVotes']['winningTitle']
-                elif 'artQuestion' in round_data and 'displayText' in round_data['artQuestion']:
-                    title = round_data['artQuestion']['displayText']
-                else:
-                    title = "UNDEFINED"
-                filename = f"{self.clean_string(title)}.{self.ext}"
-                if self.generate_images(index, filename):
-                    initial_comment = f"*{title}*"
-                    if self.slack_client:
-                        self.slack_client.files_upload(
+                for index, round_data in enumerate(data['rounds']):
+                    if 'titleVotes' in round_data and 'winningTitle' in round_data['titleVotes']:
+                        title = round_data['titleVotes']['winningTitle']
+                    elif 'artQuestion' in round_data and 'displayText' in round_data['artQuestion']:
+                        title = round_data['artQuestion']['displayText']
+                    else:
+                        title = "UNDEFINED"
+                    filename = f"{self.clean_string(title)}.{self.ext}"
+                    if self.generate_images(index, filename):
+                        initial_comment = f"*{title}*"
+                        self.queue_file_upload(
                             file=filename,
                             title=title,
-                            channels=self.slack_channel,
-                            initial_comment=initial_comment,
-                            thread_ts=intro_message['ts']
+                            initial_comment=initial_comment
                         )
-                    if os.path.exists(filename):
-                        os.remove(filename)
+                    else:
+                        raise Exception(f"Failed to generate image for round {index}")
+
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise

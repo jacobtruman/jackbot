@@ -9,7 +9,9 @@ class Teeko(Jackbox):
     def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
         super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
-        self.data_url = self.gallery_url = 'TeeKOGame'
+        self.gallery_url = 'TeeKO2Game'
+        self.data_url = 'TeeKO2Game'
+        # https://jbg-blobcast-artifacts.s3.amazonaws.com/TeeKO2Game/404a73b6ab4b39be8f73d971d24f52a0/data.json.gz
 
     def create_image(self, _drawing, _name):
         print(f"INFO: Processing image {_name}")

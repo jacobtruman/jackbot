@@ -1,22 +1,30 @@
 import os
 from jackbox import Jackbox
 
-
-class Quiplash2(Jackbox):
+"""
+https://fishery.jackboxgames.com/artifact/gallery/EverydayGame/9423fa464204f26306192521dfe72402
+https://s3.amazonaws.com/jbg-blobcast-artifacts/EverydayGame/9423fa464204f26306192521dfe72402/image-player-1-award.jpg
+https://s3.amazonaws.com/jbg-blobcast-artifacts/EverydayGame/9423fa464204f26306192521dfe72402/anim_5.gif
+"""
+class Everyday(Jackbox):
 
     def __init__(self, game_id: str = None, api_account: str = 'dev', dry_run: bool = False):
         super().__init__(game_id=game_id, api_account=api_account, dry_run=dry_run)
 
-        self.data_url = self.gallery_url = self.base_image_url = self.base_gen_image_url = 'Quiplash2Game'
+        self.data_url = self.gallery_url = self.base_image_url = self.base_gen_image_url = 'EverydayGame'
+        self.game_name = "The Devils in the Details"
 
     def process_game(self):
         data = super().process_game()
+        import json
+        print(json.dumps(data))
+        exit()
         if data:
             try:
                 # Queue intro message first
                 self.queue_intro_message()
 
-                for index, matchup in enumerate(data['matchups']):
+                for index, matchup in enumerate(data['blob']['matchups']):
                     filename = f"{self.clean_string(matchup['question']['prompt'])}.{self.ext}"
                     if self.generate_images(index, filename):
                         title = matchup['question']['prompt']

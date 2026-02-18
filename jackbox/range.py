@@ -14,29 +14,36 @@ class Range(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            players = {player.get("sessionId"): player for player in data.get("blob").get("players")}
+                players = {player.get("sessionId"): player for player in data.get("blob").get("players")}
 
-            for round_data in data.get("blob").get("roundData"):
-                prompts = {prompt.get('id'): prompt for prompt in round_data.get("prompts")}
-                for index, response in enumerate(round_data.get("responses")):
-                    player = players.get(response.get("authorSessionId")).get("name")
-                    prompt = prompts.get(response.get('promptId'))
-                    round_name = f"round_{round_data.get('index')}_{index}"
-                    text = prompt.get("rangeType").get("values")[response.get("targetValueIndex")].get("guessingText")
-                    image_urls = {
-                        self.ext: f"{self.base_image_url}/round_{round_data.get('index')}_{index}.{self.ext}"
-                    }
-                    filename = f"{round_name}.{self.ext}"
-                    if self.generate_images(round_name, filename, image_urls=image_urls):
-                        if self.slack_client:
-                            self.slack_client.files_upload(
+                for round_data in data.get("blob").get("roundData"):
+                    prompts = {prompt.get('id'): prompt for prompt in round_data.get("prompts")}
+                    for index, response in enumerate(round_data.get("responses")):
+                        player = players.get(response.get("authorSessionId")).get("name")
+                        prompt = prompts.get(response.get('promptId'))
+                        round_name = f"round_{round_data.get('index')}_{index}"
+                        text = prompt.get("rangeType").get("values")[response.get("targetValueIndex")].get("guessingText")
+                        image_urls = {
+                            self.ext: f"{self.base_image_url}/round_{round_data.get('index')}_{index}.{self.ext}"
+                        }
+                        filename = f"{round_name}.{self.ext}"
+                        if self.generate_images(round_name, filename, image_urls=image_urls):
+                            self.queue_file_upload(
                                 file=filename,
                                 title=f"Brought to to you by: {player}",
-                                channels=self.slack_channel,
-                                initial_comment=f"Prompt text: {text}",
-                                thread_ts=intro_message['ts']
+                                initial_comment=f"Prompt text: {text}"
                             )
-                        if os.path.exists(filename):
-                            os.remove(filename)
+                        else:
+                            raise Exception(f"Failed to generate image for {round_name}")
+
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise

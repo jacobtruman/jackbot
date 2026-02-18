@@ -15,22 +15,29 @@ class Brk(Jackbox):
     def process_game(self):
         data = super().process_game()
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            for bracket_num in data['bracketData']:
-                bracket = data['bracketData'][bracket_num]
-                for index, _ in enumerate(bracket['matchups']):
-                    title = f"{bracket['content']['prompt']['text']} {index}"
-                    filename = f"{self.clean_string(title)}.{self.ext}"
-                    if self.generate_images(f"{bracket_num}_{index}", filename):
-                        initial_comment = f"*{title}*"
-                        if self.slack_client:
-                            self.slack_client.files_upload(
+                for bracket_num in data['bracketData']:
+                    bracket = data['bracketData'][bracket_num]
+                    for index, _ in enumerate(bracket['matchups']):
+                        title = f"{bracket['content']['prompt']['text']} {index}"
+                        filename = f"{self.clean_string(title)}.{self.ext}"
+                        if self.generate_images(f"{bracket_num}_{index}", filename):
+                            initial_comment = f"*{title}*"
+                            self.queue_file_upload(
                                 file=filename,
                                 title=title,
-                                channels=self.slack_channel,
-                                initial_comment=initial_comment,
-                                thread_ts=intro_message['ts']
+                                initial_comment=initial_comment
                             )
-                        if os.path.exists(filename):
-                            os.remove(filename)
+                        else:
+                            raise Exception(f"Failed to generate image for bracket {bracket_num} matchup {index}")
+
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise

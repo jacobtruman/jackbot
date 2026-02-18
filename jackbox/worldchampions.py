@@ -45,19 +45,18 @@ class Worldchampions(Jackbox):
         svg2png(bytestring=dwg.tostring(), write_to=filename)
         return filename
 
-    def _slack_drawing_message(self, drawing, metadata):
+    def _queue_drawing_message(self, drawing, metadata):
+        """Queue messages for a drawing (file upload + chat message)."""
         filename = self.create_image(drawing)
 
         name = drawing['name']
         title = metadata['title']
         text = f"Stare at the art... {name}"
-        if self.slack_client:
-            self.slack_client.files_upload(
-                file=filename,
-                title=text,
-                channels=self.slack_channel,
-                thread_ts=metadata['intro_message']['ts']
-            )
+
+        self.queue_file_upload(
+            file=filename,
+            title=text
+        )
 
         text_items = {
             "Name": name,
@@ -79,23 +78,28 @@ class Worldchampions(Jackbox):
             }
         ]
 
-        if self.slack_client:
-            self.slack_client.chat_postMessage(
-                channel=self.slack_channel,
-                text=text,
-                blocks=str(blocks),
-                thread_ts=metadata['intro_message']['ts']
-            )
-        if os.path.exists(filename):
-            os.remove(filename)
+        self.queue_chat_message(
+            text=text,
+            blocks=str(blocks)
+        )
 
     def process_game(self):
         data = super().process_game()
 
         if data:
-            intro_message = self.send_intro_message()
+            try:
+                # Queue intro message first
+                self.queue_intro_message()
 
-            for index, matchup in enumerate(data['blob']['matchups']):
-                metadata = {"intro_message": intro_message, "full_title": matchup['fullTitle'], "title": matchup['title']}
-                self._slack_drawing_message(matchup['challenger'], metadata)
-                self._slack_drawing_message(matchup['champion'], metadata)
+                for index, matchup in enumerate(data['blob']['matchups']):
+                    metadata = {"full_title": matchup['fullTitle'], "title": matchup['title']}
+                    self._queue_drawing_message(matchup['challenger'], metadata)
+                    self._queue_drawing_message(matchup['champion'], metadata)
+
+                # All messages prepared successfully, send them
+                self.send_queued_messages()
+
+            except Exception as ex:
+                print(f"ERROR: Failed to process game: {ex}")
+                self.clear_queue(cleanup_files=True)
+                raise
