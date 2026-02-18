@@ -5,6 +5,7 @@
   },
   "prod": {
     "slack_token": "xoxb-1111111111-222222222222-AAAAAAAAAAAAAAAAAAAAAAAA",
-    "slack_channel": "prod_channel"
+    "slack_channel": "prod_channel",
+    "slack_channel_id": "C9876543210"
   }
 }
